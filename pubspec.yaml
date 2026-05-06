@@ -27,7 +27,7 @@ flutter:
 
   assets:
     - assets/images/integrador.jpg
-    - assets/images/lucas.jpg
     - assets/images/arthur.jpg
     - assets/images/luan.png
     - assets/images/abner.jpg
+    - assets/images/gabriel.jpg
