@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../login_page.dart';
 import 'cadastrar_doacao_screen.dart';
 import 'buscar_receptor_screen.dart';
-import 'integrantes_projeto_screen.dart';
+import '../widgets/integrantes_projeto_screen.dart';
 import '../widgets/descricao_screen.dart';
 import '../widgets/home_card.dart';
 

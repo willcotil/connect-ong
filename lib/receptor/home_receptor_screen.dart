@@ -3,7 +3,7 @@ import 'package:flutter_application_1/doador/cadastrar_doacao_screen.dart';
 import 'package:flutter_application_1/widgets/home_card.dart';
 import '../login_page.dart';
 import 'buscar_ong_screen.dart';
-import 'integrantes_projeto_screen.dart';
+import '../widgets/integrantes_projeto_screen.dart';
 import 'cadastrar_ong_screen.dart';
 import '../widgets/descricao_screen.dart';
 
