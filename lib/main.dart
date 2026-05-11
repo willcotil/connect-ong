@@ -1,51 +1,129 @@
 import 'package:flutter/material.dart';
-import 'doador/home_doador_screen.dart';
-import 'receptor/home_receptor_screen.dart';
+
 import 'login_page.dart';
 
+import 'doador/home_doador_screen.dart';
+import 'receptor/home_receptor_screen.dart';
+
+import 'services/session_service.dart';
+
 void main() {
-  runApp(const MyApp());
+
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+
+  const MyApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
+
       title: 'Connect Ong',
+
       theme: ThemeData(
-        primaryColor: const Color(0xFF0a8449),
-        scaffoldBackgroundColor: const Color(0xFFa8dbc1),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0a8449),
-          foregroundColor: Colors.white,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF0a8449),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        fontFamily: 'Poppins',
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0a8449),
-          primary: const Color(0xFF0a8449),
-        ),
+
+        primarySwatch: Colors.green,
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginPage(),      
-        '/login': (context) => const LoginPage(),
-        '/home_doador': (context) => const HomeDoadorScreen(),
-        '/home_receptor': (context) => const HomeReceptorScreen(),
-      },
+
+      home: const SplashDecider(),
+    );
+  }
+}
+
+class SplashDecider extends StatefulWidget {
+
+  const SplashDecider({
+    super.key,
+  });
+
+  @override
+  State<SplashDecider> createState() =>
+      _SplashDeciderState();
+}
+
+class _SplashDeciderState
+    extends State<SplashDecider> {
+
+  @override
+  void initState() {
+
+    super.initState();
+
+    verificarLogin();
+  }
+
+  Future<void> verificarLogin() async {
+
+    final sessionService =
+        SessionService();
+
+    final usuario =
+        await sessionService.obterUsuario();
+
+    if (!mounted) return;
+
+    if (usuario == null) {
+
+      Navigator.pushReplacement(
+
+        context,
+
+        MaterialPageRoute(
+
+          builder: (_) =>
+              const LoginPage(),
+        ),
+      );
+
+      return;
+    }
+
+    if (usuario.tipo == 'DOADOR') {
+
+      Navigator.pushReplacement(
+
+        context,
+
+        MaterialPageRoute(
+
+          builder: (_) =>
+              const HomeDoadorScreen(),
+        ),
+      );
+
+    } else {
+
+      Navigator.pushReplacement(
+
+        context,
+
+        MaterialPageRoute(
+
+          builder: (_) =>
+              const HomeReceptorScreen(),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return const Scaffold(
+
+      body: Center(
+
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

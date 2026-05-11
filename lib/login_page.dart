@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'doador/home_doador_screen.dart';
 import 'receptor/home_receptor_screen.dart';
+
 import 'services/auth_service.dart';
+import 'services/session_service.dart';
+
+import 'models/usuario_logado.dart';
+
 import 'widgets/descricao_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,14 +17,18 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() =>
+      _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState
+    extends State<LoginPage> {
 
-  final emailController = TextEditingController();
+  final emailController =
+      TextEditingController();
 
-  final senhaController = TextEditingController();
+  final senhaController =
+      TextEditingController();
 
   String? erroLogin;
 
@@ -39,14 +48,17 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _fazerLogin() async {
 
-    final email = emailController.text.trim();
+    final email =
+        emailController.text.trim();
 
-    final senha = senhaController.text;
+    final senha =
+        senhaController.text;
 
     if (email.isEmpty || senha.isEmpty) {
 
       setState(() {
-        erroLogin = "Preencha todos os campos.";
+        erroLogin =
+            "Preencha todos os campos.";
       });
 
       return;
@@ -61,20 +73,36 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
 
-      final authService = AuthService();
+      final authService =
+          AuthService();
 
-      final response = await authService.login(
+      final response =
+          await authService.login(
         email: email,
         senha: senha,
       );
 
-      final tipoUsuario = response['tipo'];
+      final usuario =
+          UsuarioLogado.fromJson(
+        response,
+      );
+
+      final sessionService =
+          SessionService();
+
+      await sessionService.salvarUsuario(
+        usuario,
+      );
+
+      final tipoUsuario =
+          usuario.tipo;
 
       if (tipoUsuarioSelecionado == 0 &&
           tipoUsuario != 'DOADOR') {
 
         setState(() {
-          erroLogin = "Usuário não cadastrado como Doador.";
+          erroLogin =
+              "Usuário não cadastrado como Doador.";
         });
 
         return;
@@ -84,7 +112,8 @@ class _LoginPageState extends State<LoginPage> {
           tipoUsuario != 'ONG') {
 
         setState(() {
-          erroLogin = "Usuário não cadastrado como ONG.";
+          erroLogin =
+              "Usuário não cadastrado como ONG.";
         });
 
         return;
@@ -96,11 +125,12 @@ class _LoginPageState extends State<LoginPage> {
 
         MaterialPageRoute(
 
-          builder: (_) => tipoUsuarioSelecionado == 0
+          builder: (_) =>
+              tipoUsuarioSelecionado == 0
 
-              ? const HomeDoadorScreen()
+                  ? const HomeDoadorScreen()
 
-              : const HomeReceptorScreen(),
+                  : const HomeReceptorScreen(),
         ),
       );
 
@@ -110,7 +140,10 @@ class _LoginPageState extends State<LoginPage> {
 
         erroLogin = e
             .toString()
-            .replaceAll('Exception: ', '');
+            .replaceAll(
+              'Exception: ',
+              '',
+            );
       });
 
     } finally {
@@ -124,21 +157,27 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
 
-    const baseColor = Color(0xFF0a8449);
+    const baseColor =
+        Color(0xFF0a8449);
 
     return Scaffold(
 
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor:
+          const Color(0xFFF5F5F5),
 
       body: Center(
 
         child: SingleChildScrollView(
 
-          padding: const EdgeInsets.symmetric(horizontal: 28),
+          padding:
+              const EdgeInsets.symmetric(
+            horizontal: 28,
+          ),
 
           child: Column(
 
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment:
+                MainAxisAlignment.center,
 
             children: [
 
@@ -146,39 +185,20 @@ class _LoginPageState extends State<LoginPage> {
 
                 tag: 'logo_app',
 
-                child: Container(
+                child: ClipRRect(
 
-                  decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(100),
 
-                    shape: BoxShape.circle,
+                  child: Image.asset(
 
-                    boxShadow: [
+                    'assets/images/integrador.jpg',
 
-                      BoxShadow(
+                    height: 150,
 
-                        color: Colors.black.withOpacity(0.1),
+                    width: 150,
 
-                        blurRadius: 20,
-
-                        offset: const Offset(0, 10),
-                      )
-                    ],
-                  ),
-
-                  child: ClipRRect(
-
-                    borderRadius: BorderRadius.circular(100),
-
-                    child: Image.asset(
-
-                      'assets/images/integrador.jpg',
-
-                      height: 150,
-
-                      width: 150,
-
-                      fit: BoxFit.cover,
-                    ),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -193,11 +213,10 @@ class _LoginPageState extends State<LoginPage> {
 
                   fontSize: 32,
 
-                  fontWeight: FontWeight.bold,
+                  fontWeight:
+                      FontWeight.bold,
 
                   color: baseColor,
-
-                  letterSpacing: -1,
                 ),
               ),
 
@@ -205,57 +224,55 @@ class _LoginPageState extends State<LoginPage> {
 
               Container(
 
-                padding: const EdgeInsets.all(24),
+                padding:
+                    const EdgeInsets.all(24),
 
                 decoration: BoxDecoration(
 
                   color: Colors.white,
 
-                  borderRadius: BorderRadius.circular(28),
-
-                  boxShadow: [
-
-                    BoxShadow(
-
-                      color: Colors.black.withOpacity(0.04),
-
-                      blurRadius: 15,
-
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+                  borderRadius:
+                      BorderRadius.circular(28),
                 ),
 
                 child: Column(
 
                   children: [
 
-                    _buildToggleSelector(baseColor),
+                    _buildToggleSelector(
+                      baseColor,
+                    ),
 
                     const SizedBox(height: 24),
 
                     _buildTextField(
 
-                      controller: emailController,
+                      controller:
+                          emailController,
 
                       label: 'E-mail',
 
-                      icon: Icons.alternate_email,
+                      icon:
+                          Icons.alternate_email,
 
-                      baseColor: baseColor,
+                      baseColor:
+                          baseColor,
                     ),
 
                     const SizedBox(height: 16),
 
                     _buildTextField(
 
-                      controller: senhaController,
+                      controller:
+                          senhaController,
 
                       label: 'Senha',
 
-                      icon: Icons.lock_outline,
+                      icon:
+                          Icons.lock_outline,
 
-                      baseColor: baseColor,
+                      baseColor:
+                          baseColor,
 
                       isPassword: true,
                     ),
@@ -273,38 +290,25 @@ class _LoginPageState extends State<LoginPage> {
 
                       child: ElevatedButton(
 
-                        style: ElevatedButton.styleFrom(
+                        style:
+                            ElevatedButton.styleFrom(
 
-                          backgroundColor: baseColor,
+                          backgroundColor:
+                              baseColor,
 
-                          foregroundColor: Colors.white,
-
-                          shape: RoundedRectangleBorder(
-
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-
-                          elevation: 0,
+                          foregroundColor:
+                              Colors.white,
                         ),
 
-                        onPressed: carregando
-                            ? null
-                            : _fazerLogin,
+                        onPressed:
+                            carregando
+                                ? null
+                                : _fazerLogin,
 
                         child: carregando
 
-                            ? const SizedBox(
-
-                                height: 22,
-
-                                width: 22,
-
-                                child: CircularProgressIndicator(
-
-                                  color: Colors.white,
-
-                                  strokeWidth: 2.5,
-                                ),
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
                               )
 
                             : const Text(
@@ -312,12 +316,9 @@ class _LoginPageState extends State<LoginPage> {
                                 'ENTRAR',
 
                                 style: TextStyle(
-
                                   fontSize: 16,
-
-                                  fontWeight: FontWeight.bold,
-
-                                  letterSpacing: 1.2,
+                                  fontWeight:
+                                      FontWeight.bold,
                                 ),
                               ),
                       ),
@@ -337,10 +338,8 @@ class _LoginPageState extends State<LoginPage> {
                   "Não tem conta? Cadastre-se",
 
                   style: TextStyle(
-
-                    color: Colors.grey.shade700,
-
-                    fontWeight: FontWeight.bold,
+                    color:
+                        Colors.grey.shade700,
                   ),
                 ),
               ),
@@ -362,21 +361,11 @@ class _LoginPageState extends State<LoginPage> {
                 },
 
                 icon: const Icon(
-
                   Icons.info_outline,
-
-                  size: 18,
-
-                  color: Colors.grey,
                 ),
 
                 label: const Text(
-
                   "Sobre o Projeto",
-
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
                 ),
               ),
             ],
@@ -386,95 +375,75 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildToggleSelector(Color baseColor) {
-
-    return Container(
-
-      height: 50,
-
-      padding: const EdgeInsets.all(4),
-
-      decoration: BoxDecoration(
-
-        color: const Color(0xFFF5F5F5),
-
-        borderRadius: BorderRadius.circular(14),
-      ),
-
-      child: Row(
-
-        children: [
-
-          _buildToggleButton(
-            0,
-            "Doador",
-            baseColor,
-          ),
-
-          _buildToggleButton(
-            1,
-            "ONG",
-            baseColor,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleButton(
-    int index,
-    String label,
+  Widget _buildToggleSelector(
     Color baseColor,
   ) {
 
-    bool isSelected =
-        tipoUsuarioSelecionado == index;
+    return Row(
 
-    return Expanded(
+      children: [
 
-      child: GestureDetector(
+        Expanded(
 
-        onTap: () {
+          child: ElevatedButton(
 
-          setState(() {
-            tipoUsuarioSelecionado = index;
-          });
-        },
+            style:
+                ElevatedButton.styleFrom(
 
-        child: Container(
+              backgroundColor:
+                  tipoUsuarioSelecionado == 0
+                      ? baseColor
+                      : Colors.grey.shade300,
+            ),
 
-          alignment: Alignment.center,
+            onPressed: () {
 
-          decoration: BoxDecoration(
+              setState(() {
+                tipoUsuarioSelecionado = 0;
+              });
+            },
 
-            color: isSelected
-                ? baseColor
-                : Colors.transparent,
-
-            borderRadius: BorderRadius.circular(10),
-          ),
-
-          child: Text(
-
-            label,
-
-            style: TextStyle(
-
-              color: isSelected
-                  ? Colors.white
-                  : Colors.grey.shade600,
-
-              fontWeight: FontWeight.bold,
+            child: const Text(
+              "Doador",
             ),
           ),
         ),
-      ),
+
+        const SizedBox(width: 8),
+
+        Expanded(
+
+          child: ElevatedButton(
+
+            style:
+                ElevatedButton.styleFrom(
+
+              backgroundColor:
+                  tipoUsuarioSelecionado == 1
+                      ? baseColor
+                      : Colors.grey.shade300,
+            ),
+
+            onPressed: () {
+
+              setState(() {
+                tipoUsuarioSelecionado = 1;
+              });
+            },
+
+            child: const Text(
+              "ONG",
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildTextField({
 
-    required TextEditingController controller,
+    required TextEditingController
+        controller,
 
     required String label,
 
@@ -496,33 +465,13 @@ class _LoginPageState extends State<LoginPage> {
         labelText: label,
 
         prefixIcon: Icon(
-
           icon,
-
           color: baseColor,
-
-          size: 22,
         ),
-
-        filled: true,
-
-        fillColor: const Color(0xFFF9F9F9),
 
         border: OutlineInputBorder(
-
-          borderRadius: BorderRadius.circular(14),
-
-          borderSide: BorderSide.none,
-        ),
-
-        focusedBorder: OutlineInputBorder(
-
-          borderRadius: BorderRadius.circular(14),
-
-          borderSide: BorderSide(
-            color: baseColor,
-            width: 2,
-          ),
+          borderRadius:
+              BorderRadius.circular(14),
         ),
       ),
     );
@@ -532,15 +481,18 @@ class _LoginPageState extends State<LoginPage> {
 
     return Container(
 
-      margin: const EdgeInsets.only(top: 16),
+      margin:
+          const EdgeInsets.only(top: 16),
 
-      padding: const EdgeInsets.all(12),
+      padding:
+          const EdgeInsets.all(12),
 
       decoration: BoxDecoration(
 
         color: Colors.red.shade50,
 
-        borderRadius: BorderRadius.circular(12),
+        borderRadius:
+            BorderRadius.circular(12),
       ),
 
       child: Row(
@@ -548,12 +500,8 @@ class _LoginPageState extends State<LoginPage> {
         children: [
 
           const Icon(
-
             Icons.error_outline,
-
             color: Colors.red,
-
-            size: 20,
           ),
 
           const SizedBox(width: 8),
@@ -565,12 +513,7 @@ class _LoginPageState extends State<LoginPage> {
               erroLogin!,
 
               style: const TextStyle(
-
                 color: Colors.red,
-
-                fontSize: 13,
-
-                fontWeight: FontWeight.w500,
               ),
             ),
           ),
